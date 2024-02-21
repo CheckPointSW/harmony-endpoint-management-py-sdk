@@ -20,12 +20,12 @@ prod_dependencies = [
     'requests==2.31.0',
     'typing-extensions==4.8.0',
     'unitsnet-py==0.1.82',
-    'urllib3==2.0.6',
+    'urllib3==2.0.7',
 ]
 
 setup_kwargs = {
     'name': "chkp-harmony-endpoint-management-sdk",
-    'version': '1.1.24',
+    'version': '1.1.25',
     'keywords': '',
     'license': 'MIT',
     'description': 'Harmony Endpoint Official Python SDK',
