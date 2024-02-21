@@ -1,0 +1,167 @@
+    self,
+{{#if bodyParam}}
+    {{#if bodyParam.required}}
+        {{#with bodyParam}}
+        {{#eq ../contentType "null"}}
+    {{#or getContent.isAnyType getContent.isArray getContent.isMap getContent.isNull getContent.isString  getContent.isInteger getContent.isNumber getContent.isBoolean}}
+    # GTO-EA-1-1
+    body: typing.Union[{{#each getContent}}{{#with this.schema}}{{baseName}},{{> model_templates/schema_python_types }}{{/with}}{{/each}}],
+    {{else}}
+    # GTO-EA-1-2
+    body: {{#each getContent}}{{#with this.schema}}{{baseName}}{{/with}}{{/each}},
+    {{/or}}
+    {{else}}
+    {{#or getContent.isAnyType getContent.isArray getContent.isMap getContent.isNull getContent.isString  getContent.isInteger getContent.isNumber getContent.isBoolean}}
+    # GTO-EA-2-1
+    body: typing.Union[{{#each getContent}}{{#eq @key ../../contentType }}{{#with this.schema}}{{baseName}},{{> model_templates/schema_python_types }}{{/with}}{{/eq}}{{/each}}],
+    {{else}}
+    # GTO-EA-2-2
+    body: {{#each getContent}}{{#with this.schema}}{{baseName}}{{/with}}{{/each}},
+    {{/or}}
+        {{/eq}}
+        {{/with}}
+        {{#if isOverload}}
+            {{#eq skipDeserialization "True"}}
+    skip_deserialization: typing_extensions.Literal[True],
+            {{/eq}}
+            {{#neq contentType "null"}}
+                {{#with bodyParam}}
+                    {{#each content}}
+                        {{#eq @key ../../contentType}}
+                            {{#if @first}}
+    content_type: typing_extensions.Literal["{{{@key}}}"] = ...,
+                            {{else}}
+    content_type: typing_extensions.Literal["{{{@key}}}"],
+                            {{/if}}
+                        {{/eq}}
+                    {{/each}}
+                {{/with}}
+            {{else}}
+    content_type: str = ...,
+            {{/neq}}
+        {{else}}
+            {{#with bodyParam}}
+                {{#each getContent}}
+                    {{#if @first}}
+{{#if facade}}{{else}}
+    content_type: str = '{{{@key}}}',{{/if}}
+                    {{/if}}
+                {{/each}}
+            {{/with}}
+        {{/if}}
+    {{else}}
+        {{#if isOverload}}
+            {{#eq skipDeserialization "True"}}
+    skip_deserialization: typing_extensions.Literal[True],
+            {{/eq}}
+            {{#neq contentType "null"}}
+                {{#with bodyParam}}
+                    {{#each getContent}}
+                        {{#eq @key ../../contentType}}
+                            {{#if @first}}
+    content_type: typing_extensions.Literal["{{{@key}}}"] = ...,
+                            {{else}}
+    content_type: typing_extensions.Literal["{{{@key}}}"],
+                            {{/if}}
+                        {{/eq}}
+                    {{/each}}
+                {{/with}}
+            {{else}}
+    content_type: str = ...,
+            {{/neq}}
+        {{else}}
+            {{#with bodyParam}}
+                {{#each getContent}}
+                    {{#if @first}}
+    content_type: str = '{{{@key}}}',
+                    {{/if}}
+                {{/each}}
+            {{/with}}
+        {{/if}}
+        {{#with bodyParam}}
+        {{#eq ../contentType "null"}}
+    body: typing.Union[{{#each getContent}}{{#with this.schema}}{{baseName}}, {{> model_templates/schema_python_types }}{{/with}}{{/each}}schemas.Unset] = schemas.unset,
+        {{else}}
+    body: typing.Union[{{#each getContent}}{{#eq @key ../../contentType }}{{#with this.schema}}{{baseName}}, {{> model_templates/schema_python_types }}{{/with}}{{/eq}}{{/each}}schemas.Unset] = schemas.unset,
+        {{/eq}}
+        {{/with}}
+    {{/if}}
+{{else}}
+    {{#if isOverload}}
+        {{#eq skipDeserialization "True"}}
+    skip_deserialization: typing_extensions.Literal[True],
+        {{/eq}}
+    {{/if}}
+{{/if}}
+{{#if queryParams}}
+    query_params: RequestQueryParams = frozendict.frozendict(),
+{{/if}}
+{{#if headerParams}}
+    header_params: RequestHeaderParams = frozendict.frozendict(),
+{{/if}}
+{{#if pathParams}}
+    path_params: RequestPathParams = frozendict.frozendict(),
+{{/if}}
+{{#if cookieParams}}
+    cookie_params: RequestCookieParams = frozendict.frozendict(),
+{{/if}}
+{{#if produces}}{{#if facade}}{{else}}
+    accept_content_types: typing.Tuple[str] = _all_accept_content_types,{{/if}}{{/if}}
+{{#if servers}}
+    host_index: typing.Optional[int] = None,
+{{/if}}{{#if facade}}
+    do_not_handle_job = False,{{/if}}
+    stream: bool = False,
+    timeout: typing.Optional[typing.Union[int, typing.Tuple]] = None,
+    {{#if isOverload}}
+        {{#eq skipDeserialization "False"}}
+    skip_deserialization: typing_extensions.Literal[True] = ...,
+        {{/eq}}
+        {{#eq skipDeserialization "null"}}
+    skip_deserialization: bool = ...,
+        {{/eq}}
+    {{else}}
+    {{#if facade}}{{else}}
+    skip_deserialization: bool = True,
+    {{/if}}
+    {{/if}}
+{{#eq skipDeserialization "True"}}
+) -> api_client.ApiResponseWithoutDeserialization: ...
+{{/eq}}
+{{#eq skipDeserialization "False"}}
+) -> {{#if getAllResponsesAreErrors}}api_client.ApiResponseWithoutDeserialization: ...{{else}}typing.Union[
+    {{#each responses}}
+        {{#if isDefault}}
+    ApiResponseForDefault,
+        {{else}}
+    ApiResponseFor{{code}},
+        {{/if}}
+    {{/each}}
+]: ...
+    {{/if}}
+{{/eq}}
+{{#eq skipDeserialization "null"}}
+{{#if isOverload}}
+) -> typing.Union[
+    {{#each responses}}
+        {{#if isDefault}}
+    ApiResponseForDefault,
+        {{else}}
+    ApiResponseFor{{code}},
+        {{/if}}
+    {{/each}}
+    api_client.ApiResponseWithoutDeserialization,
+]: ...
+{{else}}
+{{!-- ){{#if returnBaseType}} -> {{returnBaseType}}{{/if}}: --}}
+) -> HarmonyResponse:
+    """
+    {{{notes}}}
+
+    API Parameters:
+{{#allParams}}
+     - {{baseName}}: {{dataType}} - {{#if required}}Mandatory {{/if}}{{#if isBodyParam}}{{else}}placed in "{{#if isPathParam}}path_params{{/if}}{{#if isQueryParam}}query_params{{/if}}{{#if isHeaderParam}}header_params{{/if}}" param{{/if}}{{#if description}}, {{{description}}}{{/if}}
+    {{/allParams}}
+    """
+{{/if}}
+{{/eq}}

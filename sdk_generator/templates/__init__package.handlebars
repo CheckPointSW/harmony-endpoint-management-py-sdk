@@ -1,0 +1,88 @@
+# coding: utf-8
+
+# flake8: noqa
+
+{{>partial_header}}
+
+__version__ = "{{packageVersion}}"
+
+# import ApiClient
+from {{packageName}}.api_client import ApiClient
+
+# import Configuration
+from {{packageName}}.configuration import Configuration
+{{#if hasHttpSignatureMethods}}
+from {{packageName}}.signing import HttpSigningConfiguration
+{{/if}}
+
+# import exceptions
+from {{packageName}}.exceptions import OpenApiException
+from {{packageName}}.exceptions import ApiAttributeError
+from {{packageName}}.exceptions import ApiTypeError
+from {{packageName}}.exceptions import ApiValueError
+from {{packageName}}.exceptions import ApiKeyError
+from {{packageName}}.exceptions import ApiException
+{{#if recursionLimit}}
+
+__import__('sys').setrecursionlimit({{recursionLimit}})
+{{/if}}
+
+from {{packageName}}.exceptions import ApiException
+
+# Code generation part of HarmonyEndpoint
+
+import json
+from chkp_harmony_endpoint_management_sdk.core.logger import logger
+from chkp_harmony_endpoint_management_sdk.classes.sdk_connection_state import SDKConnectionState
+from chkp_harmony_endpoint_management_sdk.classes.harmony_endpoint_sdk_info import HarmonyEndpointSDKInfo
+from {{packageName}}.sdk_build import sdk_build_info
+
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
+from {{packageName}}.paths.{{nickname}}.{{httpMethod}} import {{operationIdOriginal}}
+{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+
+client = ApiClient()
+{{#apiInfo}}
+
+ {{#apis}}
+class {{classname}}():
+    def __init__(self, session_manager):
+        self.__session_manager = session_manager
+    {{#operations}}{{#operation}}
+
+    @property
+    def {{operationId}}(self):
+        return {{operationIdOriginal}}(self.__session_manager.client).{{operationId}}
+    {{/operation}}{{/operations}}
+
+{{/apis}}
+
+
+class HarmonyEndpointBase:
+    
+    @staticmethod
+    def info() -> HarmonyEndpointSDKInfo:
+        return sdk_build_info()
+
+    def __init__(self, instance_schema: str, session_manager):
+        logger(f'A new instance "{instance_schema}" of sdk created, full version info: {HarmonyEndpointBase.info()}')
+        self._session_manager = session_manager
+
+
+    def disconnect(self):
+        self._session_manager.disconnect()
+
+    def reconnect(self):
+        self._session_manager.reconnect()
+
+    def connection_state(self) -> SDKConnectionState:
+        self._session_manager.connection_state()
+
+    {{#apis}}
+
+    @property
+    def {{classVarName}}(self):
+        return {{classname}}(self._session_manager)
+    {{/apis}}
+
+{{/apiInfo}}

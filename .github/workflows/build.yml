@@ -1,0 +1,23 @@
+name: Build SDK Package
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Build SDK
+        run: |
+          python -m pip install -r ./requirements.txt
+          export BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          export BUILD_JOB_ID=$GITHUB_RUN_ID
+          export BUILD_VERSION=$(python setup.py --version)
+          python ./sdk_generator/generate_sdk.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chkp_harmony_endpoint_management_sdk
+          path: chkp_harmony_endpoint_management_sdk
