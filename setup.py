@@ -25,8 +25,8 @@ prod_dependencies = [
 
 setup_kwargs = {
     'name': "chkp-harmony-endpoint-management-sdk",
-    'version': '1.1.25',
-    'keywords': '',
+    'version': '1.1.26',
+    'keywords': 'python, harmony, endpoint, sdk, checkpoint',
     'license': 'MIT',
     'description': 'Harmony Endpoint Official Python SDK',
     'long_description': long_description,
@@ -35,7 +35,7 @@ setup_kwargs = {
     'author_email': 'haimk@checkpoint.com',
     'maintainer': 'Haim Kastner',
     'maintainer_email': 'haimk@checkpoint.com',
-    'url': 'https://gitlab.locsec.net/ep-security-application/harmony-endpoint-management-py-sdk',
+    'url': 'https://github.com/CheckPointSW/harmony-endpoint-management-py-sdk',
     'packages': find_packages(exclude=['sdk_generator', 'scripts' 'tests']),
     'package_data': package_data,
     'install_requires': prod_dependencies,
