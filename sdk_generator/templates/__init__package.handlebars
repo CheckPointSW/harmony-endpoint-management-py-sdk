@@ -57,6 +57,19 @@ class {{classname}}():
 
 {{/apis}}
 
+operations = [
+ {{#apis}}
+    {
+        'class_name': '{{classVarName}}',
+        'class_description' : '{{operationTagDescription}}',
+        'methods': [{{#operations}}{{#operation}}
+            {
+                'method_name': '{{operationId}}',
+                'method_description': '{{notes}}',
+            },{{/operation}}{{/operations}}]
+    },
+{{/apis}}
+]
 
 class HarmonyEndpointBase:
     

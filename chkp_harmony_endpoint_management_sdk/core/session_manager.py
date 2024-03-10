@@ -30,6 +30,8 @@ CI_APPLICATION_PATH = '/app/endpoint-web-mgmt'
 EXTERNAL_API_BASE_PATH = '/harmony/endpoint/api'
 CI_AUTH_PATH = '/auth/external'
 
+SOURCE_HEADER = 'harmony-endpoint-py-sdk'
+
 class SessionManager:
     def __init__(self):
         self.__session_operations: SessionOperations = None
@@ -106,6 +108,7 @@ class SessionManager:
             "do_not_handle_job": False,
             "endpoint_token" : self.__endpoint_token,
             "infinity_portal_token": self.__infinity_portal_token,
+            "source_header": SOURCE_HEADER,
         }
 
         configuration.host = self.__get_url()

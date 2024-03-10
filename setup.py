@@ -3,7 +3,7 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+long_description = (this_directory / "README.md").read_text(encoding='utf-8')
 
 package_data = \
 {'': ['*']}
@@ -19,13 +19,13 @@ prod_dependencies = [
     'python-dotenv==1.0.0',
     'requests==2.31.0',
     'typing-extensions==4.8.0',
-    'unitsnet-py==0.1.82',
+    'unitsnet-py>=0.1.82',
     'urllib3==2.0.7',
 ]
 
 setup_kwargs = {
     'name': "chkp-harmony-endpoint-management-sdk",
-    'version': '1.1.27',
+    'version': '1.1.31',
     'keywords': 'python, harmony, endpoint, sdk, checkpoint',
     'license': 'MIT',
     'description': 'Harmony Endpoint Official Python SDK',
