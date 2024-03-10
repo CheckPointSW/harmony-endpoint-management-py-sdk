@@ -409,7 +409,10 @@ class BaseApi(api_client.Api):
 
         _headers.add("x-mgmt-session-id", session_id)
         _headers.add("x-mgmt-request-id", request_id)
-        _headers.add("x-mgmt-data-request-source", 'harmony-endpoint-py-sdk')
+
+        source_header = self.api_client.configuration.api_key['session']['source_header']
+        if source_header:
+            _headers.add("x-mgmt-data-request-source", source_header) 
 
         endpoint_token = self.api_client.configuration.api_key['session']['endpoint_token']
         if endpoint_token:

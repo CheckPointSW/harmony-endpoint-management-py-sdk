@@ -128,7 +128,7 @@ Harmony Endpoint also provides APIs for MSSP and Cloud service management (relev
 
 The usage is similar to the management API
 ```python
-from chkp_harmony_endpoint_management_sdk import HarmonyEndpointSaaS, InfinityPortalAuth
+from chkp_harmony_endpoint_management_sdk import HarmonyEndpointSaaS, InfinityPortalAuth, HarmonyEndpointSaaSOptions
 
 he_saas = HarmonyEndpointSaaS()
 
@@ -136,7 +136,10 @@ he_saas = HarmonyEndpointSaaS()
 he_saas.connect(infinity_portal_auth=InfinityPortalAuth(
         client_id="place here your CI client-id", # The "Client ID"
         access_key= "place here your CI access-key", # The "Secret Key"
-        gateway="https://cloudinfra-gw-us.portal.checkpoint.com/auth/external" # The "Authentication URL"
+        gateway="https://cloudinfra-gw-us.portal.checkpoint.com/auth/external", # The "Authentication URL"
+        harmony_endpoint_saas_options=HarmonyEndpointSaaSOptions(
+                    activate_mssp_session=True # Activate MSSP's session management, turn on if you're using MSSP APIs
+                )
         )) 
 
 # Query the cloud API operation
