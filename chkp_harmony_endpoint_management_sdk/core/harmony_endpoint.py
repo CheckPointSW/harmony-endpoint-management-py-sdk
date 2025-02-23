@@ -11,10 +11,8 @@ from chkp_harmony_endpoint_management_sdk.generated.saas import HarmonyEndpointB
 
 print_ea_message = True
 class HarmonyEndpoint(HarmonyEndpointCloudBase):
-    
+
     def __init__(self):
-        if print_ea_message:
-            print('This package is currently in EA (Early Availability) stage. Use with caution, as it may undergo significant changes and improvements. Feedback and contributions are highly encouraged. To report a bug, please go to https://github.com/CheckPointSW/harmony-endpoint-management-py-sdk/issues or contact us at harmony-endpoint-external-api@checkpoint.com')
         super().__init__('HarmonyEndpoint', SessionManager())
 
     def connect(self, infinity_portal_auth: InfinityPortalAuth):
@@ -29,10 +27,8 @@ class HarmonyEndpoint(HarmonyEndpointCloudBase):
 
 # TODO: Open when on-premise will be release to public
 # class HarmonyEndpointPremise(HarmonyEndpointPremiseBase):
-    
+
 #     def __init__(self):
-#         if print_ea_message:
-#           print('This API is currently under development. Please make sure you know what you are doing!!! For any question contact us at harmony-endpoint-external-api@checkpoint.com')
 #         super().__init__('HarmonyEndpointPremise', SessionManager())
 
 #     def connect(self, on_premise_portal_auth: OnPremisePortalAuth):
@@ -46,10 +42,8 @@ class HarmonyEndpoint(HarmonyEndpointCloudBase):
 #         self._session_manager.connect_premise(on_premise_portal_auth, session_operations)
 
 class HarmonyEndpointSaaS(HarmonyEndpointSaaSBase):
-    
+
     def __init__(self):
-        if print_ea_message:
-            print('This package is currently in EA (Early Availability) stage. Use with caution, as it may undergo significant changes and improvements. Feedback and contributions are highly encouraged. To report a bug, please go to https://github.com/CheckPointSW/harmony-endpoint-management-py-sdk/issues or contact us at harmony-endpoint-external-api@checkpoint.com')
         super().__init__('HarmonyEndpointSaaS', SessionManager())
 
     def connect(self, infinity_portal_auth: InfinityPortalAuth, harmony_endpoint_saas_options: HarmonyEndpointSaaSOptions):
