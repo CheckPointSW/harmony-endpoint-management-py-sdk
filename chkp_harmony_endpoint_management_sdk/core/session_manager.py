@@ -12,14 +12,15 @@ from chkp_harmony_endpoint_management_sdk.classes.infinity_portal_auth import In
 from chkp_harmony_endpoint_management_sdk.classes.internal import SessionOperations
 from chkp_harmony_endpoint_management_sdk.core.logger import logger, error_logger
 from chkp_harmony_endpoint_management_sdk.core.sdk_platform import KEEP_ALIVE_INTERVAL, KEEP_ALIVE_PERFORM_GRACE, MSSP_KEEP_ALIVE_EXPIRATION
-from chkp_harmony_endpoint_management_sdk.generated.cloud.api_client import ApiClient as CloudApiClient , Configuration as CloudConfiguration
+from chkp_harmony_endpoint_management_sdk.generated.cloud.api_client import ApiClient as CloudApiClient, Configuration as CloudConfiguration
 # from chkp_harmony_endpoint_management_sdk.generated.premise.api_client import ApiClient as PremiseApiClient , Configuration as PremiseConfiguration
-from chkp_harmony_endpoint_management_sdk.generated.saas.api_client import ApiClient as SAASApiClient , Configuration as SAASConfiguration
+from chkp_harmony_endpoint_management_sdk.generated.saas.api_client import ApiClient as SAASApiClient, Configuration as SAASConfiguration
 import uuid
 from enum import Enum
 from urllib.parse import urlparse
 import jwt
 import requests
+
 
 class WorkMode(Enum):
     CLOUD = "cloud"
@@ -35,6 +36,7 @@ SOURCE_HEADER = 'harmony-endpoint-py-sdk'
 
 VERIFY_CONTENT = False
 
+
 class SessionManager:
     def __init__(self):
         self.__session_operations: SessionOperations = None
@@ -44,7 +46,7 @@ class SessionManager:
         self.__session_id: str = str(uuid.uuid4())
         self.__work_mode: WorkMode = None
         self.__url: str = ''
-        
+
         self.__harmony_endpoint_saas_options: harmony_endpoint_saas_options = None
         """
         The CI token expiration
@@ -54,12 +56,12 @@ class SessionManager:
         """
         The CI token expiration
         """
-    
+
         self.__next_ci_expiration: Duration = None
         """
         The CI token expiration
         """
-    
+
         self.__next_endpoint_session_expiration: Duration = None
         """
         The endpoint service token expiration
@@ -84,21 +86,21 @@ class SessionManager:
             return f'{self.__url}{EXTERNAL_API_BASE_PATH}'
         if self.__work_mode == WorkMode.SAAS:
             return f'{self.__url}{CI_APPLICATION_PATH}'
-       
+
         return f'{self.__url}{CI_APPLICATION_PATH}{EXTERNAL_API_BASE_PATH}'
 
     @property
     def client(self) -> Any:
 
         if self.__sdk_connection_state == SDKConnectionState.DISCONNECTED:
-            error_logger(f'Unable to process operation call, no session configured, connect first')
+            error_logger('Unable to process operation call, no session configured, connect first')
             raise HarmonyApiException(error_scope=HarmonyErrorScope.SESSION, message='No session configured, connect first')
 
-        configuration = None 
-        
+        configuration = None
+
         if self.__work_mode == WorkMode.CLOUD:
             configuration = CloudConfiguration()
-	    # TODO: Open when on-premise will be release to public
+        # TODO: Open when on-premise will be release to public
         # if self.__work_mode == WorkMode.PREMISE:
         #     configuration = PremiseConfiguration()
         if self.__work_mode == WorkMode.SAAS:
