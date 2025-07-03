@@ -1,5 +1,5 @@
 aenum~=3.1
-certifi~=2024.7
+certifi>=2024.0,<2026.0
 charset-normalizer~=3.3
 frozendict~=2.3
 idna~=3.7
@@ -7,7 +7,7 @@ MarkupSafe~=2.1
 python-dateutil~=2.8
 python-dotenv~=1.0
 requests~=2.32
-typing-extensions~=4.8.0
+typing-extensions~=4.9.0
 pyjwt~=2.8
-unitsnet-py>=0.1
+unitsnet-py>=0.1.82
 urllib3~=2.2

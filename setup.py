@@ -6,27 +6,27 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text(encoding='utf-8')
 
 package_data = \
-{'': ['*']}
+    {'': ['*']}
 
 prod_dependencies = [
-    'aenum==3.1.15',
-    'certifi==2023.7.22',
-    'charset-normalizer==3.3.0',
-    'frozendict==2.3.10',
-    'idna==3.7',
-    'MarkupSafe==2.1.3',
-    'python-dateutil==2.8.2',
-    'python-dotenv==1.0.0',
-    'requests==2.32.0',
-    'typing-extensions==4.8.0',
-    'pyjwt==2.8.0',
+    'aenum~=3.1',
+    'certifi>=2024.0,<2026.0',
+    'charset-normalizer~=3.3',
+    'frozendict~=2.3',
+    'idna~=3.7',
+    'MarkupSafe~=2.1',
+    'python-dateutil~=2.8',
+    'python-dotenv~=1.0',
+    'requests~=2.32',
+    'typing-extensions~=4.9.0',
+    'pyjwt~=2.8',
     'unitsnet-py>=0.1.82',
-    'urllib3==2.0.7',
+    'urllib3~=2.2',
 ]
 
 setup_kwargs = {
     'name': "chkp-harmony-endpoint-management-sdk",
-    'version': '1.1.43',
+    'version': '1.2.2',
     'keywords': 'python, harmony, endpoint, sdk, checkpoint',
     'license': 'MIT',
     'description': 'Harmony Endpoint Official Python SDK',
@@ -45,4 +45,3 @@ setup_kwargs = {
 
 
 setup(**setup_kwargs)
-

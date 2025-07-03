@@ -1,6 +1,5 @@
 import logging
 import os
-import datetime
 
 handler = logging.StreamHandler()
 
@@ -28,16 +27,20 @@ network_logger = _network_logger.info
 
 logger(f'logger is activated with "{__activate_logs}"')
 
+
 def activate_all_loggers():
     _logger.setLevel(logging.DEBUG)
     _error_logger.setLevel(logging.DEBUG)
     _network_logger.setLevel(logging.DEBUG)
 
+
 def activate_info_logger():
     _logger.setLevel(logging.DEBUG)
 
+
 def activate_error_logger():
     _error_logger.setLevel(logging.DEBUG)
+
 
 def activate_network_logger():
     _network_logger.setLevel(logging.DEBUG)
@@ -47,7 +50,7 @@ if __activate_logs == '*':
     activate_all_loggers()
 else:
     loggers = __activate_logs.split(',')
-    
+
     if 'info' in loggers:
         activate_info_logger()
 

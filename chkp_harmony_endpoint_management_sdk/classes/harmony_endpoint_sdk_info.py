@@ -6,6 +6,12 @@ class HarmonyEndpointSDKInfo:
         self.spec = spec
         self.spec_version = spec_version
         self.released_on = released_on
-    
+
     def __str__(self):
-        return f'sdk_build:"{self.sdk_build}", sdk_version:"{self.sdk_version}", spec:"{self.spec}", spec_version:"{self.spec_version}", released_on:"{self.released_on}"'
+        return (
+            f'sdk_build:"{self.sdk_build}", '
+            f'sdk_version:"{self.sdk_version}", '
+            f'spec:"{self.spec}", '
+            f'spec_version:"{self.spec_version}", '
+            f'released_on:"{self.released_on}"'
+        )

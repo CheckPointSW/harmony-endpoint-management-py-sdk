@@ -1,6 +1,7 @@
 from typing import Optional, Any
 from enum import Enum
 
+
 class HarmonyErrorScope(Enum):
     NETWORKING = 'NETWORKING'
     SERVICE = 'SERVICE'

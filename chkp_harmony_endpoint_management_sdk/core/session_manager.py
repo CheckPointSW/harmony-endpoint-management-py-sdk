@@ -68,12 +68,12 @@ class SessionManager:
         """
 
         self.__next_endpoint_login_expiration: Duration = None
-        """ 
-         The endpoint service token uses CI token expiration (endpoint token can be valid as long as CI token is valid, and no more) 
+        """
+         The endpoint service token uses CI token expiration (endpoint token can be valid as long as CI token is valid, and no more)
         """
 
         self.__next_mssp_expiration: Duration = None
-        """ 
+        """
           The mssp service token expiration
         """
 
@@ -107,11 +107,11 @@ class SessionManager:
             configuration = SAASConfiguration()
 
         session_info = {
-            "session_id" : self.__session_id,
-            "request_id" : str(uuid.uuid4()),
+            "session_id": self.__session_id,
+            "request_id": str(uuid.uuid4()),
             "job_status_operation": self.__session_operations.job_status_operation,
             "do_not_handle_job": False,
-            "endpoint_token" : self.__endpoint_token,
+            "endpoint_token": self.__endpoint_token,
             "infinity_portal_token": self.__infinity_portal_token,
             "source_header": SOURCE_HEADER,
         }
@@ -133,7 +133,7 @@ class SessionManager:
 
         if self.__work_mode == WorkMode.CLOUD:
             return CloudApiClient(configuration)
-	    # TODO: Open when on-premise will be release to public
+        # TODO: Open when on-premise will be release to public
         # if self.__work_mode == WorkMode.PREMISE:
         #     return PremiseApiClient(configuration)
         if self.__work_mode == WorkMode.SAAS:
@@ -141,24 +141,23 @@ class SessionManager:
 
     def __perform_endpoint_login(self):
         try:
-            logger(f'Preforming endpoint login to session id "{self.__session_id}" ...'); 
+            logger(f'Preforming endpoint login to session id "{self.__session_id}" ...')
             endpoint_response = self.__session_operations.login_operation()
-            logger(f'Preforming endpoint login to session id "{self.__session_id}" done'); 
+            logger(f'Preforming endpoint login to session id "{self.__session_id}" done')
             self.__endpoint_token = endpoint_response.http_response.headers.get('x-mgmt-api-token')
             expires_in_sec = endpoint_response.http_response.headers.get('x-mgmt-session-expiry-seconds')
             self.__next_endpoint_session_expiration = Duration.from_seconds(time.time()) + Duration.from_seconds(int(expires_in_sec))
-            self.__next_endpoint_login_expiration = self.__next_ci_expiration # login is valid as long the CI token is valid
+            self.__next_endpoint_login_expiration = self.__next_ci_expiration  # login is valid as long the CI token is valid
         except Exception as e:
             error_logger(f'Failed to login to endpoint for session "{self.__session_id}", error: {e}')
             self.__sdk_connection_state = SDKConnectionState.CONNECTION_ISSUE
             raise e
-            
 
     def __perform_mssp_login(self):
         try:
-            logger(f'Preforming mssp login to session id "{self.__session_id}" ...'); 
+            logger(f'Preforming mssp login to session id "{self.__session_id}" ...')
             self.__session_operations.login_operation()
-            logger(f'Preforming mssp login to session id "{self.__session_id}" done'); 
+            logger(f'Preforming mssp login to session id "{self.__session_id}" done')
             self.__next_mssp_expiration = Duration.from_seconds(time.time()) + MSSP_KEEP_ALIVE_EXPIRATION
         except Exception as e:
             error_logger(f'Failed to login to mssp for session "{self.__session_id}", error: {e}')
@@ -167,9 +166,9 @@ class SessionManager:
 
     def __perform_ci_login(self):
         auth_url = f'{self.__url}{CI_AUTH_PATH}'
-        
+
         try:
-            logger(f'Preforming CI login to session id "{self.__session_id}" with url "${auth_url}"...'); 
+            logger(f'Preforming CI login to session id "{self.__session_id}" with url "${auth_url}"...')
             payload = {
                 "clientId": self.__infinity_portal_auth.client_id,
                 "accessKey": self.__infinity_portal_auth.access_key
@@ -187,9 +186,8 @@ class SessionManager:
                     url=auth_url,
                     status_code=response.status_code,
                 )
-        
-            response_json = response.json()
 
+            response_json = response.json()
 
             if not response_json['success']:
                 error_logger(f'Failed to login to CI GW for session "{self.__session_id}" url "{auth_url}", error payload: {response_json}')
@@ -206,8 +204,8 @@ class SessionManager:
 
     def __perform_keep_alive(self):
         now = Duration.from_seconds(time.time())
-        logger(f'Preforming keepalive to session id {self.__session_id} ...')
-        
+        logger(f'Preforming keep-alive to session id {self.__session_id} ...')
+
         # CI relevant only when using CI GWs
         require_ci_login = self.__work_mode in [WorkMode.CLOUD, WorkMode.SAAS]
         # Endpoint login relevant only when using endpoint management API, and only on cloud after CI token expired
@@ -216,7 +214,7 @@ class SessionManager:
         require_endpoint_keep_alive = self.__work_mode in [WorkMode.CLOUD, WorkMode.PREMISE]
         # MSSP KA is relevant only when using SAAS on cloud, and consumer choose to activate MSSP session management
         require_mssp_keep_alive = (self.__work_mode in [WorkMode.SAAS]) and self.__harmony_endpoint_saas_options.activate_mssp_session
-        
+
         try:
             if require_ci_login and (not self.__next_ci_expiration or self.__next_ci_expiration - now < KEEP_ALIVE_PERFORM_GRACE):
                 try:
@@ -226,8 +224,11 @@ class SessionManager:
                 except Exception as e:
                     error_logger(f'Failed to re-login to CI for session {self.__session_id}')
                     raise e
-                
-            if require_endpoint_login and (not self.__next_endpoint_login_expiration or self.__next_endpoint_login_expiration - now < KEEP_ALIVE_PERFORM_GRACE):
+
+            if require_endpoint_login and (
+                not self.__next_endpoint_login_expiration
+                or self.__next_endpoint_login_expiration - now < KEEP_ALIVE_PERFORM_GRACE
+            ):
                 try:
                     logger(f'CI token for session {self.__session_id} used by endpoint re-created, about to re-login endpoint...')
                     self.__perform_endpoint_login()
@@ -235,8 +236,11 @@ class SessionManager:
                 except Exception as e:
                     error_logger(f'Failed to re-login to endpoint by CI token for session {self.__session_id}')
                     raise e
-                
-            if require_endpoint_keep_alive and (not self.__next_endpoint_session_expiration or self.__next_endpoint_session_expiration - now < KEEP_ALIVE_PERFORM_GRACE):
+
+            if require_endpoint_keep_alive and (
+                not self.__next_endpoint_session_expiration
+                or self.__next_endpoint_session_expiration - now < KEEP_ALIVE_PERFORM_GRACE
+            ):
                 try:
                     logger(f'Endpoint token for session {self.__session_id} is about to expired, about to send keep-alive..')
                     endpoint_response = self.__session_operations.keep_alive_operation()
@@ -247,7 +251,7 @@ class SessionManager:
                 except Exception as e:
                     error_logger(f'Failed to perform endpoint keep-alive for {self.__session_id}')
                     raise e
-                
+
             if require_mssp_keep_alive and (not self.__next_mssp_expiration or self.__next_mssp_expiration - now < KEEP_ALIVE_PERFORM_GRACE):
                 try:
                     logger(f'MSSP token for session {self.__session_id} is about to expired, about to send keep-alive..')
@@ -258,13 +262,12 @@ class SessionManager:
                 except Exception as e:
                     error_logger(f'Failed to perform MSSP keep-alive for {self.__session_id}')
                     raise e
-            
+
         except Exception as e:
             error_logger(f'Failed to perform keep-alive for {self.__session_id} error: {e}')
-            self.__sdk_connection_state = SDKConnectionState.CONNECTION_ISSUE; 
+            self.__sdk_connection_state = SDKConnectionState.CONNECTION_ISSUE
         finally:
-            logger(f'Preforming keepalive to session id {self.__session_id} done')
-
+            logger(f'Preforming keep-alive to session id {self.__session_id} done')
 
     def __keep_alive_activation(self):
         while self.__keep_alive_on_flag:
@@ -276,8 +279,7 @@ class SessionManager:
             self.__keep_alive_running_flag = True
             self.__perform_keep_alive()
             self.__keep_alive_running_flag = False
-        logger(f'Keepalvie activation  {self.__session_id} already triggered, aborting')
-        
+        logger(f'Keep-alive activation  {self.__session_id} already triggered, aborting')
 
     def __activate_keep_alive(self):
         logger(f'Session id {self.__session_id} is ready, starting keep-alive activation')
@@ -288,7 +290,6 @@ class SessionManager:
         keep_alive_thread.daemon = True
         keep_alive_thread.start()
 
-
     def __validate_cloud_params(self, infinity_portal_auth: InfinityPortalAuth):
         if not infinity_portal_auth.gateway:
             msg = "Passing gateway is mandatory"
@@ -297,7 +298,7 @@ class SessionManager:
                 error_scope=HarmonyErrorScope.INVALID_PARAMS,
                 message=msg,
             )
-        
+
         if not infinity_portal_auth.client_id:
             msg = "Passing client_id is mandatory"
             error_logger(msg)
@@ -305,7 +306,7 @@ class SessionManager:
                 error_scope=HarmonyErrorScope.INVALID_PARAMS,
                 message=msg,
             )
-        
+
         if not infinity_portal_auth.access_key:
             msg = "Passing access_key is mandatory"
             error_logger(msg)
@@ -313,7 +314,7 @@ class SessionManager:
                 error_scope=HarmonyErrorScope.INVALID_PARAMS,
                 message=msg,
             )
-        
+
         try:
             parsed_url = urlparse(infinity_portal_auth.gateway)
             if parsed_url.scheme != "https":
@@ -415,14 +416,19 @@ class SessionManager:
         self.__infinity_portal_auth = infinity_portal_auth
         self.__url = self.__infinity_portal_auth.gateway
 
-        logger(f'New cloud session started, session id {self.__session_id} connecting to {self.__url} using client id {infinity_portal_auth.client_id}')
+        logger(f'New cloud session started, ID {self.__session_id} connecting to {self.__url} using client id {infinity_portal_auth.client_id}')
 
         self.__perform_ci_login()
         self.__perform_endpoint_login()
 
         self.__activate_keep_alive()
 
-    def connect_saas(self, infinity_portal_auth: InfinityPortalAuth, harmony_endpoint_saas_options: HarmonyEndpointSaaSOptions, session_operations: SessionOperations):
+    def connect_saas(
+            self,
+            infinity_portal_auth: InfinityPortalAuth,
+            harmony_endpoint_saas_options: HarmonyEndpointSaaSOptions,
+            session_operations: SessionOperations
+    ):
         self.__work_mode = WorkMode.SAAS
         self.__sdk_connection_state = SDKConnectionState.CONNECTING
         self.__validate_cloud_params(infinity_portal_auth)
@@ -431,16 +437,20 @@ class SessionManager:
         self.__session_operations = session_operations
         self.__url = self.__infinity_portal_auth.gateway
 
-        logger(f'New saas session started *{"with" if self.__harmony_endpoint_saas_options.activate_mssp_session else "without"}* MSSP session mgmt, session id {self.__session_id} connecting to {self.__url} using client id {infinity_portal_auth.client_id}')
+        with_mssp = "with" if self.__harmony_endpoint_saas_options.activate_mssp_session else "without"
+        logger(
+            f'New saas session started *{with_mssp}* MSSP session mgmt, '
+            f'session id {self.__session_id} connecting to {self.__url} using client id {infinity_portal_auth.client_id}'
+        )
 
         self.__perform_ci_login()
         if self.__harmony_endpoint_saas_options.activate_mssp_session:
             self.__perform_mssp_login()
-        
+
         self.__activate_keep_alive()
 
     def connect_premise(self, on_premise_portal_auth: OnPremisePortalAuth, session_operations: SessionOperations):
-        self.__work_mode  = WorkMode.PREMISE
+        self.__work_mode = WorkMode.PREMISE
         self.__sdk_connection_state = SDKConnectionState.CONNECTING
         self.__validate_premise_params(on_premise_portal_auth)
         self.__on_premise_portal_auth = on_premise_portal_auth
@@ -454,7 +464,6 @@ class SessionManager:
 
         self.__perform_endpoint_login()
         self.__activate_keep_alive()
-
 
     def disconnect(self):
         logger(f'Disconnecting session session id {self.__session_id}')
