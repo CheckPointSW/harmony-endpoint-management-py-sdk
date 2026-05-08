@@ -10,7 +10,7 @@ package_data = \
 
 prod_dependencies = [
     'aenum~=3.1',
-    'certifi>=2024.0,<2026.0',
+    'certifi>=2024.0',
     'charset-normalizer~=3.3',
     'frozendict~=2.3',
     'idna~=3.7',
@@ -26,7 +26,7 @@ prod_dependencies = [
 
 setup_kwargs = {
     'name': "chkp-harmony-endpoint-management-sdk",
-    'version': '1.2.2',
+    'version': '1.2.3',
     'keywords': 'python, harmony, endpoint, sdk, checkpoint',
     'license': 'MIT',
     'description': 'Harmony Endpoint Official Python SDK',
